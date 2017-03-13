@@ -38,7 +38,7 @@ var SetLoci = React.createClass({
           fill them out in proper order!
         </p>
         <p>
-          Once you're satisfied with your list, click on "Continue" below to move on.
+          Once you're satisfied with your list, click on "Finish Palace" below to move on.
         </p>
 
         <form name='loci-list' id='loci-form' onSubmit={this.registerLoci}>

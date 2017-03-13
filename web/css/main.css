@@ -1,7 +1,47 @@
 body {
   padding-top: 50px;
+  font-size: 2em;
 }
 .main-content {
   padding: 40px 15px;
   text-align: center;
 }
+
+.jumbotron{
+  background: url(../images/jumbotron.jpg);
+  color: #fff;
+  text-align: center;
+}
+
+.index-button{
+  background-color: #3D71CD;
+  color: #fff;
+  text-transform: 'uppercase';
+  width: 200px;
+  height: 200px;
+  line-height: 200px;
+  font-size: 30px;
+  border-radius: 50%;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  margin: auto;
+}
+
+#learn_button{
+  background: url(../images/learn.jpg);
+  background-size: 150%;
+}
+
+#train_button{
+  background: url(../images/train.jpg);
+  background-size: 100%;
+}
+
+.index-button:hover{
+  opacity: .75;
+}
+
+.index-button-link{
+  text-decoration: none;
+}
+

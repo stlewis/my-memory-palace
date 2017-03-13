@@ -22,7 +22,7 @@ var AddItems = React.createClass({
     console.log(configJSON);
     sessionStorage.setItem("palaceConfig", configJSON);
     e.preventDefault();
-    window.location ='#trainer'
+    window.location ='#item-list'
   },
 
   render: function(){
