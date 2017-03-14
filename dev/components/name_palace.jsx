@@ -17,13 +17,14 @@ var NamePalace = React.createClass({
   render: function(){
     var inputStyle = {
       width: "50%",
-      display: 'inline-block'
+      display: 'inline-block',
+      marginRight: 10,
+      fontSize: "1.3em"
     };
     return(
       <div>
         <p>
-          Start by giving your palace a name. This is for your easy reference if you should
-          happen to create more than one.
+          Give your palace a name. You can call it anything you want, this is just for your own reference.
         </p>
         <form name='start-palace' onSubmit={this.setPalaceName}>
           <input type='text' 

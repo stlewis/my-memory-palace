@@ -13,11 +13,12 @@ var Loci = React.createClass({
       height: 30,
       borderRadius: 5,
       WebKitBorderRadius: 5,
-      margin: 5,
-      width: "50%"
+      margin: 10,
+      paddingLeft: 10,
+      width: "50%",
     };
     return(
-      <div key={this.props.id} style={lociStyle}>{this.state.data.name}</div>
+      <div id={"loci_" + this.state.data.id} className='loci-handle' key={this.state.data.id} style={lociStyle}>{this.state.data.name}</div>
     );
   }
 

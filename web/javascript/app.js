@@ -12055,8 +12055,16 @@ var App = _react2.default.createClass({
   render: function render() {
     return _react2.default.createElement(
       'div',
-      null,
-      this.props.children
+      { className: 'container' },
+      _react2.default.createElement(
+        'div',
+        { className: 'row' },
+        _react2.default.createElement(
+          'div',
+          { className: 'col-md-12', style: { textAlign: 'left' } },
+          this.props.children
+        )
+      )
     );
   }
 
@@ -12155,7 +12163,9 @@ var NamePalace = _react2.default.createClass({
   render: function render() {
     var inputStyle = {
       width: "50%",
-      display: 'inline-block'
+      display: 'inline-block',
+      marginRight: 10,
+      fontSize: "1.3em"
     };
     return _react2.default.createElement(
       'div',
@@ -12163,7 +12173,7 @@ var NamePalace = _react2.default.createClass({
       _react2.default.createElement(
         'p',
         null,
-        'Start by giving your palace a name. This is for your easy reference if you should happen to create more than one.'
+        'Give your palace a name. You can call it anything you want, this is just for your own reference.'
       ),
       _react2.default.createElement(
         'form',
@@ -12213,6 +12223,27 @@ var SetLoci = _react2.default.createClass({
     };
   },
 
+  componentDidMount: function componentDidMount() {
+    self = this;
+    $('#loci_list').sortable({
+      update: function update(evt, ui) {
+        // Wholesale update of the list of loci
+        var new_loci = [];
+        $('#loci_list div.loci-handle').each(function (idx, handle) {
+          var loci_data = {};
+          loci_data['id'] = $(handle).attr('id').replace(/[^\d]+/, '');
+          loci_data['name'] = $(handle).html();
+          new_loci.push(loci_data);
+        });
+        self.setState({ palace_loci: new_loci });
+        var config = JSON.parse(sessionStorage.getItem('palaceConfig'));
+        config.loci = new_loci;
+        sessionStorage.setItem("palaceConfig", JSON.stringify(config));
+      }
+    });
+    $('#loci_list').disableSelection();
+  },
+
   registerLoci: function registerLoci(e) {
     var config = JSON.parse(sessionStorage.getItem('palaceConfig'));
     var element = document.getElementById('loci_name');
@@ -12232,17 +12263,33 @@ var SetLoci = _react2.default.createClass({
     var inputStyle = {
       width: "50%",
       display: 'inline-block',
-      marginRight: 10
+      marginRight: 10,
+      fontSize: "1.3em"
     };
+
+    var buttonStyle = {
+      marginTop: 30,
+      height: 100,
+      width: 300,
+      fontSize: "1.5em",
+      textAlign: "center",
+      lineHeight: "80px"
+    };
+
     return _react2.default.createElement(
       'div',
       null,
       _react2.default.createElement(
         'p',
         null,
-        'Excellent, now, we need to fill ',
+        'Excellent! Now, we need to fill ',
         this.state.palace_name,
-        ' with loci. Fill in the form below with a name for each of the loci in your palace. Make sure you fill them out in proper order!'
+        ' with loci.'
+      ),
+      _react2.default.createElement(
+        'p',
+        null,
+        'Fill in the form below with a name for each of the loci in your palace. When starting out, it\'s best to write them in order. That will allow you to practice "walking" through your palace from start to finish. For a bigger challenge later, you might consider filling in your loci in random order to test your ability to visit them out of order.'
       ),
       _react2.default.createElement(
         'p',
@@ -12250,22 +12297,36 @@ var SetLoci = _react2.default.createClass({
         'Once you\'re satisfied with your list, click on "Finish Palace" below to move on.'
       ),
       _react2.default.createElement(
-        'form',
-        { name: 'loci-list', id: 'loci-form', onSubmit: this.registerLoci },
-        _react2.default.createElement('input', { type: 'text', style: inputStyle, autoComplete: 'false', className: 'form-control', name: 'loci-name', id: 'loci_name', placeholder: 'Enter Loci Name' }),
-        _react2.default.createElement('input', { type: 'submit', name: 'submit', value: 'Add Loci', className: 'btn btn-primary' })
-      ),
-      _react2.default.createElement(
-        'a',
-        { href: '#add-items', className: 'btn btn-lg btn-success' },
-        'Finish Palace'
+        'h2',
+        null,
+        this.state.palace_name,
+        ' Loci'
       ),
       _react2.default.createElement(
         'div',
-        null,
+        { style: { marginTop: 30 } },
+        _react2.default.createElement(
+          'form',
+          { name: 'loci-list', id: 'loci-form', onSubmit: this.registerLoci },
+          _react2.default.createElement('input', { type: 'text', style: inputStyle, autoComplete: 'off', className: 'form-control', name: 'loci-name', id: 'loci_name', placeholder: 'Enter Loci Name' }),
+          _react2.default.createElement('input', { type: 'submit', name: 'submit', value: 'Add Loci', className: 'btn btn-primary' })
+        )
+      ),
+      _react2.default.createElement(
+        'div',
+        { id: 'loci_list' },
         this.state.palace_loci.map(function (loci, idx) {
           return _react2.default.createElement(_loci2.default, { key: loci.name + idx, loci_data: loci });
         })
+      ),
+      _react2.default.createElement(
+        'div',
+        { style: { textAlign: 'center' } },
+        _react2.default.createElement(
+          'a',
+          { href: '#add-items', style: buttonStyle, className: 'btn btn-lg btn-success' },
+          'Finish Palace'
+        )
       )
     );
   }
@@ -12511,12 +12572,13 @@ var Loci = _react2.default.createClass({
       height: 30,
       borderRadius: 5,
       WebKitBorderRadius: 5,
-      margin: 5,
+      margin: 10,
+      paddingLeft: 10,
       width: "50%"
     };
     return _react2.default.createElement(
       'div',
-      { key: this.props.id, style: lociStyle },
+      { id: "loci_" + this.state.data.id, className: 'loci-handle', key: this.state.data.id, style: lociStyle },
       this.state.data.name
     );
   }
