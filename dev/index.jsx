@@ -9,6 +9,7 @@ import SetLoci from './components/set_loci.jsx';
 import AddItems from './components/add_items.jsx';
 import ItemList from './components/item_list.jsx';
 import Trainer from './components/trainer.jsx';
+import Completed from './components/completed.jsx';
 
 ReactDOM.render(
   <Router history={hashHistory}>
@@ -19,6 +20,7 @@ ReactDOM.render(
       <Route path="add-items" component={AddItems} />
       <Route path="item-list" component={ItemList} />
       <Route path="trainer" component={Trainer} />
+      <Route path="completed" component={Completed} />
     </Route>
   </Router>, 
   document.querySelector('.main-content'));

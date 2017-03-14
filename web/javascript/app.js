@@ -11980,6 +11980,23 @@ var AddItems = _react2.default.createClass({
 
   render: function render() {
     self = this;
+
+    var inputStyle = {
+      width: "50%",
+      fontSize: "1.2em"
+    };
+
+    var divStyle = {
+      paddingTop: 30
+    };
+
+    var btnStyle = {
+      height: 100,
+      width: 300,
+      lineHeight: "100px",
+      fontSize: "1.5em",
+      marginTop: 30
+    };
     return _react2.default.createElement(
       "div",
       null,
@@ -12000,30 +12017,23 @@ var AddItems = _react2.default.createClass({
         { name: "add-memory-items", id: "add_memory_items", onSubmit: this.setMemoryItems },
         this.state.palace_loci.map(function (loci, idx) {
           return _react2.default.createElement(
-            "table",
-            { key: loci.name + idx },
+            "div",
+            { style: divStyle, key: loci.id },
             _react2.default.createElement(
-              "tbody",
+              "div",
               null,
-              _react2.default.createElement(
-                "tr",
-                null,
-                _react2.default.createElement(
-                  "td",
-                  null,
-                  loci.name
-                ),
-                _react2.default.createElement(
-                  "td",
-                  null,
-                  _react2.default.createElement("input", { type: "text", className: "loci-item", name: "loci-" + loci.id + "-item", id: "loci_" + loci.id + "_item" })
-                )
-              ),
-              _react2.default.createElement("tr", null)
+              "What is at the ",
+              loci.name,
+              "?"
+            ),
+            _react2.default.createElement(
+              "div",
+              null,
+              _react2.default.createElement("input", { style: inputStyle, type: "text", className: "loci-item form-control", name: "loci-" + loci.id + "-item", id: "loci_" + loci.id + "_item" })
             )
           );
         }),
-        _react2.default.createElement("input", { type: "submit", name: "submit", value: "GO", className: "btn btn-lg btn-success" })
+        _react2.default.createElement("input", { style: btnStyle, type: "submit", name: "submit", value: "GO", className: "btn btn-lg btn-success" })
       )
     );
   }
@@ -12090,36 +12100,76 @@ var _react2 = _interopRequireDefault(_react);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ItemList = _react2.default.createClass({
-  displayName: 'ItemList',
+  displayName: "ItemList",
 
   getInitialState: function getInitialState() {
     var storage = JSON.parse(sessionStorage.getItem("palaceConfig"));
+    console.log(storage.loci);
+    var loci = storage.loci.filter(function (l) {
+      return l.value != "";
+      return true;
+    });
 
     return {
-      loci: storage.loci
+      loci: loci
     };
   },
 
   render: function render() {
+
+    var btnStyle = {
+      height: 100,
+      width: 300,
+      lineHeight: "100px",
+      fontSize: "1.5em",
+      marginTop: 30
+    };
+
+    var nameStyle = {
+      fontWeight: 'bold',
+      color: 'red'
+    };
+
+    var valueStyle = {
+      fontStyle: 'italic',
+      color: 'blue'
+    };
+
     return _react2.default.createElement(
-      'div',
+      "div",
       null,
       _react2.default.createElement(
-        'p',
+        "p",
         null,
-        'Review your item list below, and try to place each one within a loci in your memory palace. When you\'re ready to take the test, click the "Start" button below.'
+        "Review your list below. Try to come up with a vivid image placing a hint about each item at it's corresponding loci in your memory palace. Remember, the more out of place or strange the image you come up with, the more likely you are to remember it."
+      ),
+      _react2.default.createElement(
+        "p",
+        null,
+        "When you've finished, (try to give yourself a time limit to review the list), click the \"START\" button to test yourself."
       ),
       this.state.loci.map(function (loci) {
         return _react2.default.createElement(
-          'div',
+          "div",
           { key: 'loci-' + loci.id },
-          loci.value
+          "At the ",
+          _react2.default.createElement(
+            "span",
+            { style: nameStyle },
+            loci.name
+          ),
+          " is ",
+          _react2.default.createElement(
+            "span",
+            { style: valueStyle },
+            loci.value
+          )
         );
       }),
       _react2.default.createElement(
-        'a',
-        { href: '#trainer', className: 'btn btn-success btn-lg' },
-        'Start'
+        "a",
+        { style: btnStyle, href: "#trainer", className: "btn btn-success btn-lg" },
+        "START"
       )
     );
   }
@@ -12613,6 +12663,7 @@ var Loci = _react2.default.createClass({
       color: '#FF0000',
       cursor: 'pointer'
     };
+
     return _react2.default.createElement(
       'div',
       { id: "loci_" + this.state.data.id, className: 'loci-handle', key: this.state.data.id, style: lociStyle },
@@ -12650,8 +12701,13 @@ var TestLoci = _react2.default.createClass({
   displayName: "TestLoci",
 
   getInitialState: function getInitialState() {
-    var loci = JSON.parse(sessionStorage.getItem("palaceConfig")).loci;
-    return { loci: loci, loci_index: 0, message: "" };
+    var all_loci = JSON.parse(sessionStorage.getItem("palaceConfig")).loci;
+    var loci = all_loci.filter(function (l) {
+      return l.value != "";
+      return true;
+    });
+
+    return { loci: loci, loci_index: 0, message: "\xA0" };
   },
 
   checkLoci: function checkLoci(e) {
@@ -12659,6 +12715,7 @@ var TestLoci = _react2.default.createClass({
     var guess = element.value;
     if (guess.toLowerCase() == this.state.loci[this.state.loci_index].value.toLowerCase()) {
       element.value = "";
+      this.setState({ message: "Correct!" });
       // If they were right, increment the loci counter, provided there's something in the 
       // next loci. If there isn't, they've completed the list, so bounce
       var nextLociIdx = this.state.loci_index + 1;
@@ -12666,11 +12723,11 @@ var TestLoci = _react2.default.createClass({
       if (nextLoci != undefined) {
         this.setState({ loci_index: nextLociIdx });
       } else {
-        this.setState({ message: "You got them all, congratulations!" });
+        window.location = '#completed';
       }
     } else {
       element.value = "";
-      this.setState({ message: "Sory, that was wrong! Give it another shot!" });
+      this.setState({ message: "Sorry, that was wrong! Give it another shot!" });
       // If they guessed wrong, they should be told so and given an opportunity to try again.
     }
     e.preventDefault();
@@ -12678,14 +12735,23 @@ var TestLoci = _react2.default.createClass({
 
   render: function render() {
     var loci = this.state.loci[this.state.loci_index];
+    var inputStyle = {
+      width: "50%",
+      float: "left",
+      marginRight: 10
+    };
     return _react2.default.createElement(
       "div",
       null,
       _react2.default.createElement(
-        "p",
+        "h2",
         null,
         "What is at the ",
-        loci.name,
+        _react2.default.createElement(
+          "span",
+          { style: { color: 'red' } },
+          loci.name
+        ),
         "?"
       ),
       _react2.default.createElement(
@@ -12696,7 +12762,7 @@ var TestLoci = _react2.default.createClass({
       _react2.default.createElement(
         "form",
         { name: "test-loci-form", onSubmit: this.checkLoci },
-        _react2.default.createElement("input", { type: "text", name: "loci", placeholder: "Loci", id: "loci_guess" }),
+        _react2.default.createElement("input", { style: inputStyle, className: "form-control", type: "text", name: "loci", placeholder: "Loci", id: "loci_guess" }),
         _react2.default.createElement("input", { type: "submit", name: "submit", value: "Check", className: "btn btn-success" })
       )
     );
@@ -27217,6 +27283,10 @@ var _trainer = __webpack_require__(115);
 
 var _trainer2 = _interopRequireDefault(_trainer);
 
+var _completed = __webpack_require__(242);
+
+var _completed2 = _interopRequireDefault(_completed);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _reactDom2.default.render(_react2.default.createElement(
@@ -27230,9 +27300,57 @@ _reactDom2.default.render(_react2.default.createElement(
     _react2.default.createElement(_reactRouter.Route, { path: 'set-loci', component: _set_loci2.default }),
     _react2.default.createElement(_reactRouter.Route, { path: 'add-items', component: _add_items2.default }),
     _react2.default.createElement(_reactRouter.Route, { path: 'item-list', component: _item_list2.default }),
-    _react2.default.createElement(_reactRouter.Route, { path: 'trainer', component: _trainer2.default })
+    _react2.default.createElement(_reactRouter.Route, { path: 'trainer', component: _trainer2.default }),
+    _react2.default.createElement(_reactRouter.Route, { path: 'completed', component: _completed2.default })
   )
 ), document.querySelector('.main-content'));
+
+/***/ }),
+/* 242 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(4);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Completed = _react2.default.createClass({
+  displayName: 'Completed',
+
+
+  render: function render() {
+    return _react2.default.createElement(
+      'div',
+      null,
+      _react2.default.createElement(
+        'h2',
+        null,
+        'Congratulations!'
+      ),
+      _react2.default.createElement(
+        'p',
+        null,
+        'You got through your whole list and got everything right!'
+      ),
+      _react2.default.createElement(
+        'p',
+        null,
+        'Choose an option below to continue:'
+      )
+    );
+  }
+
+});
+
+exports.default = Completed;
 
 /***/ })
 /******/ ]);

@@ -23,6 +23,7 @@ var Loci = React.createClass({
       color: '#FF0000',
       cursor: 'pointer'
     };
+
     return(
       <div id={"loci_" + this.state.data.id} className='loci-handle' key={this.state.data.id} style={lociStyle}>
         <span className='loci-name'>{this.state.data.name}</span>

@@ -26,7 +26,24 @@ var AddItems = React.createClass({
   },
 
   render: function(){
-    self = this
+    self = this;
+
+    var inputStyle = {
+      width: "50%",
+      fontSize: "1.2em"
+    };
+
+    var divStyle = {
+      paddingTop: 30 
+    };
+
+    var btnStyle = {
+      height: 100,
+      width: 300,
+      lineHeight: "100px",
+      fontSize: "1.5em",
+      marginTop: 30
+    }
     return(
       <div>
         <h2>What Do You Want To Remember?</h2>
@@ -36,21 +53,17 @@ var AddItems = React.createClass({
           the appropriate slot, then click "GO" to start the trainer!
         </p>
         <form name='add-memory-items' id='add_memory_items' onSubmit={this.setMemoryItems}>
-        {this.state.palace_loci.map(function(loci, idx){
-          return(
-              <table key={loci.name + idx}>
-                <tbody>
-                  <tr>
-                    <td>{loci.name}</td>
-                    <td><input type='text' className='loci-item' name={"loci-" + loci.id + "-item"} id={"loci_" + loci.id + "_item"} /></td>
-                  </tr>
-                  <tr>
-                  </tr>
-                </tbody>
-              </table>
-          ) 
-        })}
-        <input type='submit' name='submit' value='GO' className='btn btn-lg btn-success' />
+          {this.state.palace_loci.map(function(loci, idx){
+            return(
+              <div style={divStyle} key={loci.id}>
+                <div>What is at the {loci.name}?</div>
+                <div>
+                  <input style={inputStyle} type='text' className='loci-item form-control' name={"loci-" + loci.id + "-item"} id={"loci_" + loci.id + "_item"} />
+                </div>
+              </div>
+            );
+          })}
+          <input style={btnStyle} type='submit' name='submit' value='GO' className='btn btn-lg btn-success' />
         </form>
       </div>
     );
