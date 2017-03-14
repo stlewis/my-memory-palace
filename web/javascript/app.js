@@ -12232,9 +12232,10 @@ var SetLoci = _react2.default.createClass({
         $('#loci_list div.loci-handle').each(function (idx, handle) {
           var loci_data = {};
           loci_data['id'] = $(handle).attr('id').replace(/[^\d]+/, '');
-          loci_data['name'] = $(handle).html();
+          loci_data['name'] = $(handle).find('.loci-name').text();
           new_loci.push(loci_data);
         });
+        console.log(new_loci);
         self.setState({ palace_loci: new_loci });
         var config = JSON.parse(sessionStorage.getItem('palaceConfig'));
         config.loci = new_loci;
@@ -12248,9 +12249,10 @@ var SetLoci = _react2.default.createClass({
     var config = JSON.parse(sessionStorage.getItem('palaceConfig'));
     var element = document.getElementById('loci_name');
     var loci_name = element.value;
+    var d = new Date();
+    var id = d.getTime();
 
-    var count = config.loci.length;
-    config.loci.push({ name: loci_name, value: '', id: count + 1 });
+    config.loci.push({ name: loci_name, value: '', id: id });
     sessionStorage.setItem("palaceConfig", JSON.stringify(config));
 
     this.setState({ palace_name: config.name, palace_loci: config.loci });
@@ -12259,7 +12261,26 @@ var SetLoci = _react2.default.createClass({
     e.preventDefault();
   },
 
+  onDelete: function onDelete(e) {
+    var target = $(e.target);
+    var target_id = target.attr('id').replace(/[^\d]+/g, '');
+    if (confirm("Are you sure you want to remove this loci?")) {
+      var loci = this.state.palace_loci;
+      for (var i = loci.length - 1; i >= 0; i--) {
+        if (loci[i].id == target_id) {
+          loci.splice(i, 1);
+        }
+      }
+      this.setState({ palace_loci: loci });
+      var config = JSON.parse(sessionStorage.getItem('palaceConfig'));
+      config.loci = loci;
+      sessionStorage.setItem("palaceConfig", JSON.stringify(config));
+    }
+  },
+
   render: function render() {
+    var self = this;
+
     var inputStyle = {
       width: "50%",
       display: 'inline-block',
@@ -12289,12 +12310,12 @@ var SetLoci = _react2.default.createClass({
       _react2.default.createElement(
         'p',
         null,
-        'Fill in the form below with a name for each of the loci in your palace. When starting out, it\'s best to write them in order. That will allow you to practice "walking" through your palace from start to finish. For a bigger challenge later, you might consider filling in your loci in random order to test your ability to visit them out of order.'
+        'Fill in the form below with a name for each of the loci in your palace. When starting out, it\'s best to write them in order. That will allow you to practice "walking" through your palace from start to finish. For a bigger challenge later, you might consider filling in your loci randomly to test your ability to visit them out of order.'
       ),
       _react2.default.createElement(
         'p',
         null,
-        'Once you\'re satisfied with your list, click on "Finish Palace" below to move on.'
+        'You can drag and drop the list below to set the order you want. Once you\'re satisfied with your list, click on "Finish Palace" below to move on. Click on the red "X" to remove a Loci from your list.'
       ),
       _react2.default.createElement(
         'h2',
@@ -12316,7 +12337,7 @@ var SetLoci = _react2.default.createClass({
         'div',
         { id: 'loci_list' },
         this.state.palace_loci.map(function (loci, idx) {
-          return _react2.default.createElement(_loci2.default, { key: loci.name + idx, loci_data: loci });
+          return _react2.default.createElement(_loci2.default, { onDelete: self.onDelete, key: loci.name + idx, loci_data: loci });
         })
       ),
       _react2.default.createElement(
@@ -12353,37 +12374,47 @@ var _react2 = _interopRequireDefault(_react);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var StartPalace = _react2.default.createClass({
-  displayName: 'StartPalace',
+  displayName: "StartPalace",
 
   render: function render() {
+    var btnStyle = {
+      fontSize: "1.5em",
+      height: 100,
+      width: 300,
+      lineHeight: "80px"
+    };
     return _react2.default.createElement(
-      'div',
+      "div",
       null,
       _react2.default.createElement(
-        'h2',
+        "h2",
         null,
-        'Memory Palace Trainer'
+        "Memory Palace Trainer"
       ),
       _react2.default.createElement(
-        'p',
+        "p",
         null,
-        'Welcome to the Memory Palace Trainer. This application will help you master the Memory Palace technique by helping you to construct and visualize your personal Memory Palace. Before you start, if you haven\'t already, you should take a look at the ',
+        "Welcome to the Memory Palace Trainer. This application will help you master the Memory Palace technique by helping you to construct and visualize your personal Memory Palace. Before you start, if you haven't already, you should take a look at the ",
         _react2.default.createElement(
-          'a',
-          { href: '/about.html' },
-          'About page'
+          "a",
+          { href: "/about.html" },
+          "About page"
         ),
-        ' to learn about the technique and how to use the Trainer.'
+        " to learn about the technique and how to use the Trainer."
       ),
       _react2.default.createElement(
-        'p',
+        "p",
         null,
-        'If you\'re ready to get started, click the big green button below!'
+        "If you're ready to get started, click the big green button below!"
       ),
       _react2.default.createElement(
-        'a',
-        { href: '#name-palace', className: 'btn btn-lg btn-success' },
-        'Start!'
+        "div",
+        { style: { textAlign: 'center' } },
+        _react2.default.createElement(
+          "a",
+          { style: btnStyle, href: "#name-palace", className: "btn btn-lg btn-success" },
+          "Start!"
+        )
       )
     );
   }
@@ -12576,10 +12607,21 @@ var Loci = _react2.default.createClass({
       paddingLeft: 10,
       width: "50%"
     };
+
+    var cancelStyle = {
+      float: 'right',
+      color: '#FF0000',
+      cursor: 'pointer'
+    };
     return _react2.default.createElement(
       'div',
       { id: "loci_" + this.state.data.id, className: 'loci-handle', key: this.state.data.id, style: lociStyle },
-      this.state.data.name
+      _react2.default.createElement(
+        'span',
+        { className: 'loci-name' },
+        this.state.data.name
+      ),
+      _react2.default.createElement('span', { id: "remove_" + this.state.data.id + "_loci", style: cancelStyle, onClick: this.props.onDelete, className: 'glyphicon glyphicon-remove', 'aria-hidden': 'true' })
     );
   }
 

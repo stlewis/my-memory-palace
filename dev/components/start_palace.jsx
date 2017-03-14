@@ -2,6 +2,12 @@ import React from 'react';
 
 var StartPalace = React.createClass({
   render: function(){
+    var btnStyle = {
+      fontSize: "1.5em",
+      height: 100,
+      width: 300,
+      lineHeight: "80px"
+    };
     return(
       <div>
         <h2>Memory Palace Trainer</h2>
@@ -16,7 +22,9 @@ var StartPalace = React.createClass({
         <p>
           If you're ready to get started, click the big green button below!
         </p>
-        <a href='#name-palace' className='btn btn-lg btn-success'>Start!</a>
+        <div style={{textAlign: 'center'}}>
+          <a style={btnStyle} href='#name-palace' className='btn btn-lg btn-success'>Start!</a>
+        </div>
           
       </div>
     );

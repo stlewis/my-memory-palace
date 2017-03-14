@@ -18,9 +18,10 @@ var SetLoci = React.createClass({
         $('#loci_list div.loci-handle').each(function(idx, handle){
           var loci_data = {};
           loci_data['id']   = $(handle).attr('id').replace(/[^\d]+/, '');
-          loci_data['name'] = $(handle).html();
+          loci_data['name'] = $(handle).find('.loci-name').text();
           new_loci.push(loci_data)
         });
+        console.log(new_loci);
         self.setState({palace_loci: new_loci});
         var config    = JSON.parse(sessionStorage.getItem('palaceConfig')) 
         config.loci = new_loci;
@@ -36,9 +37,10 @@ var SetLoci = React.createClass({
     var config    = JSON.parse(sessionStorage.getItem('palaceConfig')) 
     var element   = document.getElementById('loci_name');
     var loci_name = element.value;
+    var d         = new Date();
+    var id        = d.getTime();
     
-    var count = config.loci.length; 
-    config.loci.push({name: loci_name, value: '', id: count + 1});
+    config.loci.push({name: loci_name, value: '', id: id});
     sessionStorage.setItem("palaceConfig", JSON.stringify(config));
     
     this.setState({palace_name: config.name, palace_loci: config.loci});
@@ -47,7 +49,26 @@ var SetLoci = React.createClass({
     e.preventDefault();
   },
 
+  onDelete: function(e){
+    var target    = $(e.target);
+    var target_id = target.attr('id').replace(/[^\d]+/g, '');
+    if(confirm("Are you sure you want to remove this loci?")){
+      var loci = this.state.palace_loci;
+      for(var i = loci.length - 1; i >= 0; i--){
+        if(loci[i].id == target_id){
+          loci.splice(i, 1);
+        }
+      }
+      this.setState({palace_loci: loci});
+      var config    = JSON.parse(sessionStorage.getItem('palaceConfig')) 
+      config.loci   = loci;
+      sessionStorage.setItem("palaceConfig", JSON.stringify(config));
+    }
+  },
+
   render: function(){
+    var self = this;
+
     var inputStyle = {
       width: "50%",
       display: 'inline-block',
@@ -73,11 +94,12 @@ var SetLoci = React.createClass({
           Fill in the form below with a name for each of the loci in your palace. When
           starting out, it's best to write them in order. That will allow you to practice
           "walking" through your palace from start to finish. For a bigger challenge later,
-          you might consider filling in your loci in random order to test your ability to 
+          you might consider filling in your loci randomly to test your ability to 
           visit them out of order.
         </p>
         <p>
-          Once you're satisfied with your list, click on "Finish Palace" below to move on.
+          You can drag and drop the list below to set the order you want. Once you're satisfied with your list, 
+          click on "Finish Palace" below to move on. Click on the red "X" to remove a Loci from your list.
         </p>
         <h2>{this.state.palace_name} Loci</h2>
         <div style={{marginTop: 30}}>
@@ -89,7 +111,7 @@ var SetLoci = React.createClass({
         <div id='loci_list'>
           {
             this.state.palace_loci.map(function(loci, idx){
-              return(<Loci key={loci.name + idx} loci_data={loci} />);
+              return(<Loci onDelete={self.onDelete} key={loci.name + idx} loci_data={loci} />);
             })
           }
         </div>
