@@ -5,6 +5,7 @@ var Trainer = React.createClass({
   render: function(){
     return(
       <div>
+        <a href='#item-list' className='btn btn-danger'>Back To Item List</a>
         <h2>Walk Your Palace</h2> 
         <p>
           As each of your loci are presented to you in turn, do your best to remember the item
@@ -13,7 +14,7 @@ var Trainer = React.createClass({
           you won't be able to move on till you get it right.
         </p>
         <p>
-          If you feel like giving up, you can click the "Quit" button below.
+          If you feel like giving up, you can click the "Back To Item List" button above.
         </p>
         <TestLoci />
       </div>

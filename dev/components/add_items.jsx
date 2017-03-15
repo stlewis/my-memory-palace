@@ -46,6 +46,7 @@ var AddItems = React.createClass({
     }
     return(
       <div>
+        <a href='#set-loci' className='btn btn-danger'>Edit Loci</a>
         <h2>What Do You Want To Remember?</h2>
         <p>
           Below is a list of all the loci for {this.state.palace_name}. Next to each of your Loci
@@ -58,7 +59,7 @@ var AddItems = React.createClass({
               <div style={divStyle} key={loci.id}>
                 <div>What is at the {loci.name}?</div>
                 <div>
-                  <input style={inputStyle} type='text' className='loci-item form-control' name={"loci-" + loci.id + "-item"} id={"loci_" + loci.id + "_item"} />
+                  <input style={inputStyle} defaultValue={loci.value} type='text' className='loci-item form-control' name={"loci-" + loci.id + "-item"} id={"loci_" + loci.id + "_item"} />
                 </div>
               </div>
             );

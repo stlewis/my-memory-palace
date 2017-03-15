@@ -36,6 +36,8 @@ var ItemList = React.createClass({
     
     return(
       <div>
+        <a href='#add-items' className='btn btn-danger'>Edit Items</a>
+        <h2>Your Item List</h2>
         <p>
           Review your list below. Try to come up with a vivid image placing a hint about
           each item at it's corresponding loci in your memory palace. Remember, the more 
