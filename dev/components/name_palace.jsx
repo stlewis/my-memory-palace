@@ -1,16 +1,27 @@
 import React from 'react';
 
 var NamePalace = React.createClass({
+  
+  getInitialState: function(){
+    return({error_message: null});
+  },
+
   setPalaceName: function(e){
     var input = document.getElementById('palace_name');
-    var config_data = {
-      name: input.value,
-      loci: []
-    };
+    
+    if(input.value == '' || input.value == null){
+      this.setState({error_message: "You must give your palace a name."}) 
+    }else{
+      this.setState({error_message: null});
+      var config_data = {
+        name: input.value,
+        loci: []
+      };
 
-    window.sessionStorage.setItem("palaceConfig", JSON.stringify(config_data));
-    input.value = '';
-    window.location ='#set-loci'
+      window.sessionStorage.setItem("palaceConfig", JSON.stringify(config_data));
+      input.value = '';
+      window.location ='#set-loci'
+    }
     e.preventDefault();
   },
 
@@ -21,8 +32,14 @@ var NamePalace = React.createClass({
       marginRight: 10,
       fontSize: "1.3em"
     };
+
+    if(this.state.error_message != null){
+      var error_message = <div style={{color: 'red'}}>{this.state.error_message}</div>
+    }
+
     return(
       <div>
+        {error_message}
         <p>
           Give your palace a name. You can call it anything you want, this is just for your own reference.
         </p>

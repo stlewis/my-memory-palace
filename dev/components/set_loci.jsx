@@ -9,6 +9,13 @@ var SetLoci = React.createClass({
     });
   },
 
+  validateLoci: function(e){
+    if(this.state.palace_loci.length == 0){
+      this.setState({error_message: "You must have at least one loci to continue!"});
+      e.preventDefault();
+    }
+  },
+
   componentDidMount: function(){
     self = this;
     $('#loci_list').sortable({
@@ -39,13 +46,17 @@ var SetLoci = React.createClass({
     var loci_name = element.value;
     var d         = new Date();
     var id        = d.getTime();
-    
-    config.loci.push({name: loci_name, value: '', id: id});
-    sessionStorage.setItem("palaceConfig", JSON.stringify(config));
-    
-    this.setState({palace_name: config.name, palace_loci: config.loci});
-    element.value = '';
-    
+
+    if(loci_name == '' || loci_name == undefined){
+      this.setState({error_message: "You must give your loci a name"});
+    }else{
+      this.setState({error_message: undefined});
+      config.loci.push({name: loci_name, value: '', id: id});
+      sessionStorage.setItem("palaceConfig", JSON.stringify(config));
+      
+      this.setState({palace_name: config.name, palace_loci: config.loci});
+      element.value = '';
+    }
     e.preventDefault();
   },
 
@@ -85,6 +96,10 @@ var SetLoci = React.createClass({
       lineHeight: "80px"
     };
 
+      if(this.state.error_message != null){
+        var error_message = <div style={{color: 'red'}}>{this.state.error_message}</div>
+      }
+
     return(
       <div>
         <p>
@@ -102,6 +117,7 @@ var SetLoci = React.createClass({
           click on "Finish Palace" below to move on. Click on the red "X" to remove a Loci from your list.
         </p>
         <h2>{this.state.palace_name} Loci</h2>
+        {error_message}
         <div style={{marginTop: 30}}>
           <form name='loci-list' id='loci-form' onSubmit={this.registerLoci}>
             <input type='text' style={inputStyle} autoComplete='off' className='form-control' name='loci-name' id='loci_name' placeholder='Enter Loci Name' />
@@ -115,7 +131,7 @@ var SetLoci = React.createClass({
             })
           }
         </div>
-        <div style={{textAlign: 'center'}}><a href='#add-items' style={buttonStyle}className='btn btn-lg btn-success'>Finish Palace</a></div>
+        <div style={{textAlign: 'center'}}><a href='#add-items' onClick={this.validateLoci} style={buttonStyle} className='btn btn-lg btn-success'>Finish Palace</a></div>
       </div>
     );
   }

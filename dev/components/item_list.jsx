@@ -3,7 +3,6 @@ import React from 'react';
 var ItemList = React.createClass({
   getInitialState: function(){
     var storage = JSON.parse(sessionStorage.getItem("palaceConfig"));
-    console.log(storage.loci);
     var loci    = storage.loci.filter(function(l){
       return l.value != "";
       return true;

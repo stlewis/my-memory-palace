@@ -14,15 +14,25 @@ var AddItems = React.createClass({
     var loci = []
     this.state.palace_loci.forEach(function(l, idx){
       var item = document.getElementById("loci_" + l.id + "_item").value;
-      loci.push({name: l.name, value: item, id: l.id});
+      if(item != ''){
+        loci.push({name: l.name, value: item, id: l.id});
+      }
     });
-    // FIXME Doing both of the below is almost definitely a code-smell.
-    this.setState({palace_name: this.state.palace_name, palace_loci: loci});
-    var configJSON = JSON.stringify({name: this.state.palace_name, loci: loci});
-    console.log(configJSON);
-    sessionStorage.setItem("palaceConfig", configJSON);
+
+    console.log("your Loci");
+    console.log(loci);
+    
+    if(loci.length > 0){
+      this.setState({error_message: undefined});
+      // FIXME Doing both of the below is almost definitely a code-smell.
+      this.setState({palace_name: this.state.palace_name, palace_loci: loci});
+      var configJSON = JSON.stringify({name: this.state.palace_name, loci: loci});
+      sessionStorage.setItem("palaceConfig", configJSON);
+      window.location ='#item-list'
+    }else{
+      this.setState({error_message: "You have to have at least one item in the list to start the test."}) 
+    }
     e.preventDefault();
-    window.location ='#item-list'
   },
 
   render: function(){
@@ -43,7 +53,12 @@ var AddItems = React.createClass({
       lineHeight: "100px",
       fontSize: "1.5em",
       marginTop: 30
+    };
+
+    if(this.state.error_message != null){
+      var error_message = <div style={{color: 'red'}}>{this.state.error_message}</div>
     }
+
     return(
       <div>
         <a href='#set-loci' className='btn btn-danger'>Edit Loci</a>
@@ -53,6 +68,7 @@ var AddItems = React.createClass({
           is a field to enter an item you'd like to remember. Place each item you want to remember in 
           the appropriate slot, then click "GO" to start the trainer!
         </p>
+        {error_message}
         <form name='add-memory-items' id='add_memory_items' onSubmit={this.setMemoryItems}>
           {this.state.palace_loci.map(function(loci, idx){
             return(

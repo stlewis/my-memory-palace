@@ -11967,15 +11967,25 @@ var AddItems = _react2.default.createClass({
     var loci = [];
     this.state.palace_loci.forEach(function (l, idx) {
       var item = document.getElementById("loci_" + l.id + "_item").value;
-      loci.push({ name: l.name, value: item, id: l.id });
+      if (item != '') {
+        loci.push({ name: l.name, value: item, id: l.id });
+      }
     });
-    // FIXME Doing both of the below is almost definitely a code-smell.
-    this.setState({ palace_name: this.state.palace_name, palace_loci: loci });
-    var configJSON = JSON.stringify({ name: this.state.palace_name, loci: loci });
-    console.log(configJSON);
-    sessionStorage.setItem("palaceConfig", configJSON);
+
+    console.log("your Loci");
+    console.log(loci);
+
+    if (loci.length > 0) {
+      this.setState({ error_message: undefined });
+      // FIXME Doing both of the below is almost definitely a code-smell.
+      this.setState({ palace_name: this.state.palace_name, palace_loci: loci });
+      var configJSON = JSON.stringify({ name: this.state.palace_name, loci: loci });
+      sessionStorage.setItem("palaceConfig", configJSON);
+      window.location = '#item-list';
+    } else {
+      this.setState({ error_message: "You have to have at least one item in the list to start the test." });
+    }
     e.preventDefault();
-    window.location = '#item-list';
   },
 
   render: function render() {
@@ -11997,6 +12007,15 @@ var AddItems = _react2.default.createClass({
       fontSize: "1.5em",
       marginTop: 30
     };
+
+    if (this.state.error_message != null) {
+      var error_message = _react2.default.createElement(
+        "div",
+        { style: { color: 'red' } },
+        this.state.error_message
+      );
+    }
+
     return _react2.default.createElement(
       "div",
       null,
@@ -12017,6 +12036,7 @@ var AddItems = _react2.default.createClass({
         this.state.palace_name,
         ". Next to each of your Loci is a field to enter an item you'd like to remember. Place each item you want to remember in the appropriate slot, then click \"GO\" to start the trainer!"
       ),
+      error_message,
       _react2.default.createElement(
         "form",
         { name: "add-memory-items", id: "add_memory_items", onSubmit: this.setMemoryItems },
@@ -12190,7 +12210,6 @@ var ItemList = _react2.default.createClass({
 
   getInitialState: function getInitialState() {
     var storage = JSON.parse(sessionStorage.getItem("palaceConfig"));
-    console.log(storage.loci);
     var loci = storage.loci.filter(function (l) {
       return l.value != "";
       return true;
@@ -12293,16 +12312,27 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var NamePalace = _react2.default.createClass({
   displayName: 'NamePalace',
 
+
+  getInitialState: function getInitialState() {
+    return { error_message: null };
+  },
+
   setPalaceName: function setPalaceName(e) {
     var input = document.getElementById('palace_name');
-    var config_data = {
-      name: input.value,
-      loci: []
-    };
 
-    window.sessionStorage.setItem("palaceConfig", JSON.stringify(config_data));
-    input.value = '';
-    window.location = '#set-loci';
+    if (input.value == '' || input.value == null) {
+      this.setState({ error_message: "You must give your palace a name." });
+    } else {
+      this.setState({ error_message: null });
+      var config_data = {
+        name: input.value,
+        loci: []
+      };
+
+      window.sessionStorage.setItem("palaceConfig", JSON.stringify(config_data));
+      input.value = '';
+      window.location = '#set-loci';
+    }
     e.preventDefault();
   },
 
@@ -12313,9 +12343,19 @@ var NamePalace = _react2.default.createClass({
       marginRight: 10,
       fontSize: "1.3em"
     };
+
+    if (this.state.error_message != null) {
+      var error_message = _react2.default.createElement(
+        'div',
+        { style: { color: 'red' } },
+        this.state.error_message
+      );
+    }
+
     return _react2.default.createElement(
       'div',
       null,
+      error_message,
       _react2.default.createElement(
         'p',
         null,
@@ -12369,6 +12409,13 @@ var SetLoci = _react2.default.createClass({
     };
   },
 
+  validateLoci: function validateLoci(e) {
+    if (this.state.palace_loci.length == 0) {
+      this.setState({ error_message: "You must have at least one loci to continue!" });
+      e.preventDefault();
+    }
+  },
+
   componentDidMount: function componentDidMount() {
     self = this;
     $('#loci_list').sortable({
@@ -12398,12 +12445,16 @@ var SetLoci = _react2.default.createClass({
     var d = new Date();
     var id = d.getTime();
 
-    config.loci.push({ name: loci_name, value: '', id: id });
-    sessionStorage.setItem("palaceConfig", JSON.stringify(config));
+    if (loci_name == '' || loci_name == undefined) {
+      this.setState({ error_message: "You must give your loci a name" });
+    } else {
+      this.setState({ error_message: undefined });
+      config.loci.push({ name: loci_name, value: '', id: id });
+      sessionStorage.setItem("palaceConfig", JSON.stringify(config));
 
-    this.setState({ palace_name: config.name, palace_loci: config.loci });
-    element.value = '';
-
+      this.setState({ palace_name: config.name, palace_loci: config.loci });
+      element.value = '';
+    }
     e.preventDefault();
   },
 
@@ -12443,6 +12494,14 @@ var SetLoci = _react2.default.createClass({
       lineHeight: "80px"
     };
 
+    if (this.state.error_message != null) {
+      var error_message = _react2.default.createElement(
+        'div',
+        { style: { color: 'red' } },
+        this.state.error_message
+      );
+    }
+
     return _react2.default.createElement(
       'div',
       null,
@@ -12469,6 +12528,7 @@ var SetLoci = _react2.default.createClass({
         this.state.palace_name,
         ' Loci'
       ),
+      error_message,
       _react2.default.createElement(
         'div',
         { style: { marginTop: 30 } },
@@ -12491,7 +12551,7 @@ var SetLoci = _react2.default.createClass({
         { style: { textAlign: 'center' } },
         _react2.default.createElement(
           'a',
-          { href: '#add-items', style: buttonStyle, className: 'btn btn-lg btn-success' },
+          { href: '#add-items', onClick: this.validateLoci, style: buttonStyle, className: 'btn btn-lg btn-success' },
           'Finish Palace'
         )
       )
