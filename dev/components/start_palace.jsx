@@ -15,7 +15,7 @@ var StartPalace = React.createClass({
           Welcome to the Memory Palace Trainer. This application will help you 
           master the Memory Palace technique by helping you to construct and visualize
           your personal Memory Palace. Before you start, if you haven't already, you should
-          take a look at the <a href='/about.html'>About page</a> to learn about the technique
+          take a look at the <a href='/learn.html'>Learn page</a> to learn about the technique
           and how to use the Trainer.
         </p>
 
